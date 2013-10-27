@@ -1,4 +1,5 @@
 *.pyc
-figures/
-data/*
+figures/*.eps
+data/*.data
+data/*.test
 
