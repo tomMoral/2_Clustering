@@ -18,15 +18,16 @@ parser.add_argument('-m', metavar='model',
                     type=str, default='kmeans',
                     help='Set the clustering model used (kmeans or EM)')
 parser.add_argument('--spread', action='store_true')
+parser.add_argument('--indep', action='store_true')
 args = parser.parse_args()
 
 if args.m == 'EM':
-    model = EM(args.K)
+    model = EM(args.K, indep=args.indep)
 else: 
     model = Kmeans(args.K, args.spread)
 
 for f in filenames_trn:
-    model.fit(os.path.join(base_dir,f))
+    p = model.fit(os.path.join(base_dir,f))
 
 for i, f in enumerate(filenames_tst):
     model.test(os.path.join(base_dir,f))
