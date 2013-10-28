@@ -1,4 +1,7 @@
 \documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb}
+
 \title{\textbf{Assignement 2}}
 \author{Vincent Bodin \& Thomas Moreau}
 \date{}
@@ -13,10 +16,14 @@ Let  $G' = (V, E')$ , with $E' = (E\setminus\{i\rightarrow j\})\cup \{i \rightar
 Then we have $\mathcal{L}(G) = \mathcal{L}(G')$\\
 \\
 \textbf{Proof}  Let $p(x) \in \mathcal{L}(G)$\\
-\begin{center}
-$p(x) = \prod_{k=1}^{n} p(x_k | x_{\pi_k})$\\
-$p(x_j | x_{\pi_j}) p(x_i | x_{\pi_i}) = \frac{p(x_j, x_i | x_{\pi_i})}{p(x_i)} $\\
-\end{center}
+\begin{equation*}
+\begin{array}{r l l}
+p(x) &=& \displaystyle\prod_{k=1}^{n} p(x_k | x_{\pi_k})\\
+\\
+p(x_j | x_{\pi_j}) p(x_i | x_{\pi_i}) &=& \displaystyle \frac{p(x_j, x_i | x_{\pi_i})}{p(x_i)} p(x_i|x_{\pi_i}) \\
+&=& \\
+\end{array}
+\end{equation*}
 
 
 \end{document}
