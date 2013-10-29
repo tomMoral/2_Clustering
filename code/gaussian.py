@@ -1,5 +1,7 @@
 import numpy as np
+from numpy import linalg
 from numpy.linalg import pinv, det
+import matplotlib as mpl
 
 class gaussian_density:
     def __init__(self, mu, sigma):
@@ -20,4 +22,13 @@ class gaussian_density:
         e = (mu - self.mu)
         self.mu = mu
         return e.mean()/2
+
+    def plot_conf(self, c):
+        v, w = linalg.eigh(self.sigma)
+        angle = np.artan2(w[0][1], w[0][0])
+        angle = 180 * angle / np.pi
+        v *= 4
+        ell = mpl.patches.Ellipse(self.mu, v[0], v[1], 180 +
+                                  angle, color=c)
+        return ell
 

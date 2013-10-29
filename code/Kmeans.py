@@ -39,8 +39,7 @@ class Kmeans:
             
         return np.array(centroid)
 
-    def fit(self, filename):
-        X = load(filename)
+    def fit(self, X):
         n = X.shape[0]
         K = self.K
 
@@ -62,18 +61,11 @@ class Kmeans:
         self.centroid = centroid
         disto = np.square(dist).sum()
 
-        fig = plt.figure()
-        cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
-        plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
-        plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
-        fig.show()
-        plt.savefig('../figures/'+self.name +'_train.eps')
-        return disto
+        return (disto, centroid)
 
-    def test(self, filename):
+    def plot(self, filename, centroid, step):
+
         X = load(filename)
-        centroid = self.centroid
-
         dist = [[norm(x-c) for c in centroid] for x in X]
         clusters = np.argmin(dist, 1)
 
@@ -82,5 +74,5 @@ class Kmeans:
         plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
         plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
         plt.show()
-        plt.savefig('../figures/'+self.name +'_test.eps')
+        plt.savefig('../figures/'+self.name +'_' + step + '.eps')
 

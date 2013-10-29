@@ -13,21 +13,25 @@ class EM:
         self.name = 'EM'
         self.K = K
         self.indep = indep
+        self.initializer = Kmeans(K)
 
     def init(self, X):
        (n,d) = X.shape
+
        indices = np.random.choice(range(n), self.K, replace = False)
-       centroid = X[indices]
+       _, centroid = self.initializer.fit(X)
        clusters = [gaussian_density(centroid[k], np.eye(d)) 
                    for k in range(self.K)]
        return clusters
 
-    def covariance(self, X, tau):
+    def covariance(self, X, centroid, tau):
         tau = tau.reshape((self.K,-1,1))
-        sigma = [X.T.dot(tau[k]*X) / tau[k].sum() for k in range(self.K)]
+        sigma = [(X-centroid[k]).T.dot(tau[k]*(X-centroid[k])) / tau[k].sum() for k in range(self.K)]
         if self.indep:
             for k in range(self.K):
                 sigma[k][0,1] = sigma[k][1,0] = 0
+                s_k = sigma[k].sum()
+                sigma[k][0,0] = sigma[k][1,1] = s_k
         return sigma
 
     def fit(self, filename):
@@ -50,7 +54,7 @@ class EM:
             #fit the gaussian to the actual clustering
             centroids = [np.average(X, axis=0, weights=tau[k]) 
                          for k in range(self.K)]
-            sigma = self.covariance((X-centroids[k]), tau)
+            sigma = self.covariance(X, centroids, tau)
             pi = [tau[k].sum() / tau.sum() for k in range(self.K)]
             for k in range(self.K):
                 e = clusters[k].set_moy(centroids[k])
@@ -94,14 +98,5 @@ class EM:
         plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
         plt.show()
         plt.savefig('../figures/'+self.name +'_test.eps')
-
-    def plot_ell(self):
-        for k in range(self.K):
-            v, w = linalg.eigh(self.sigma[k])
-            angle = np.artan2(w[0][1], w[0][0])
-            angle = 180 * angle / np.pi
-            v *= 4
-            ell = mpl.patches.Ellipse(self.centroids[k], v[0], v[1], 180 +
-            angle, color=cm[k])
 
 
