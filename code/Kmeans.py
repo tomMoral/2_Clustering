@@ -58,15 +58,17 @@ class Kmeans:
             clusters_prev = clusters
             dist = [[norm(x-c) for c in centroid] for x in X]
             clusters = np.argmin(dist, 1)
-        
-        self.centroid = centroid
        
+        self.centroid = centroid
+        disto = np.square(dist).sum()
+
         fig = plt.figure()
         cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
         plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
         plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
         fig.show()
         plt.savefig('../figures/'+self.name +'_train.eps')
+        return disto
 
     def test(self, filename):
         X = load(filename)

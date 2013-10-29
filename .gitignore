@@ -2,4 +2,4 @@
 figures/*.eps
 data/*.data
 data/*.test
-
+*.swp

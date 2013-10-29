@@ -19,11 +19,25 @@ Then we have $\mathcal{L}(G) = \mathcal{L}(G')$\\
 \begin{equation*}
 \begin{array}{r l l}
 p(x) &=& \displaystyle\prod_{k=1}^{n} p(x_k | x_{\pi_k})\\
-\\
-p(x_j | x_{\pi_j}) p(x_i | x_{\pi_i}) &=& \displaystyle \frac{p(x_j, x_i | x_{\pi_i})}{p(x_i)} p(x_i|x_{\pi_i}) \\
-&=& \\
 \end{array}
 \end{equation*}
+
+We want to see if p factorizes in $G'$. Thus, we went to find an expression for p such that:\\
+\centerline{$p(x) = \displaystyle\prod_{k=1}^{n} p(x_k | x_{\pi_k^{'}})$}
+\\
+We have $\pi_k^{'} = \pi_k \forall k \neq i,j$ sot we only need to consider the change for the vertices i and j:
+
+
+\begin{equation*}
+\begin{array}{r l l}
+p(x_i| x_{\pi_i}) p(x_j | x_{\pi_j}) &=& p(x_j | x_{\pi_i}, x_i) p(x_i | x_{\pi_i})\\
+&=& p(x_j, x_i, x_{\pi_i})\\
+&=& p(x_i | x_{\pi_i}, x_j) p(x_j | x_{\pi_i})\\
+&=& p(x_i| x_{\pi_i^{'}}) p(x_j | x_{\pi_j^{'}})\\
+\end{array}
+\end{equation*}
+
+Thus, we have $p(x) \in \mathcal{L}(G')$. By symmetry, we have $\mathcal{L}(G) = \mathcal{L}(G')$.
 
 
 \end{document}

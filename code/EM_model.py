@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
-
+from numpy import linalg
 
 from load import load
 
 from gaussian import gaussian_density
+from Kmeans import Kmeans
 
 class EM:
     def __init__(self, K, indep=False):
@@ -94,4 +95,13 @@ class EM:
         plt.show()
         plt.savefig('../figures/'+self.name +'_test.eps')
 
-        
+    def plot_ell(self):
+        for k in range(self.K):
+            v, w = linalg.eigh(self.sigma[k])
+            angle = np.artan2(w[0][1], w[0][0])
+            angle = 180 * angle / np.pi
+            v *= 4
+            ell = mpl.patches.Ellipse(self.centroids[k], v[0], v[1], 180 +
+            angle, color=cm[k])
+
+
