@@ -23,11 +23,11 @@ parser.add_argument('-m', metavar='model',
                     type=str, default='kmeans',
                     help='Set the clustering model used (kmeans or EM)')
 parser.add_argument('--spread', action='store_true')
-parser.add_argument('--indep', action='store_true')
+parser.add_argument('--iso', action='store_true')
 args = parser.parse_args()
 
 if args.m == 'EM':
-    model = EM(args.K, indep=args.indep)
+    model = EM(args.K, isotropic=args.iso)
     for i in range(1):
         model.fit(f_trn)
         model.test(f_tst)
@@ -37,12 +37,13 @@ else:
     centers = []
     X = load(f_trn)
     for i in range(50):
-        out.write('\b\b\b\b\b\b{:6.2%}'.format(i/(50.)))
+        out.write('\r{:3.0%}'.format(i/(50.)))
         out.flush()
         d,c = model.fit(X)
         distos.append(d)
         centers.append(c)
     distos = np.array(distos)
+    print '\r100%'
     print "distortion avg : ", distos.mean()
     print "Best model : " , distos.min()
 

@@ -73,6 +73,6 @@ class Kmeans:
         fig = plt.figure()
         plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
         plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
-        plt.show()
+        fig.show()
         plt.savefig('../figures/'+self.name +'_' + step + '.eps')
 

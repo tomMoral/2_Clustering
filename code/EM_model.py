@@ -10,10 +10,10 @@ from gaussian import gaussian_density
 from Kmeans import Kmeans
 
 class EM:
-    def __init__(self, K, indep=False):
+    def __init__(self, K, isotropic=False):
         self.name = 'EM'
         self.K = K
-        self.indep = indep
+        self.isotropic = isotropic
         self.initializer = Kmeans(K)
 
     def init(self, X):
@@ -26,13 +26,14 @@ class EM:
        return clusters
 
     def covariance(self, X, centroid, tau):
-        tau = tau.reshape((self.K,-1,1))
-        sigma = [(X-centroid[k]).T.dot(tau[k]*(X-centroid[k])) / tau[k].sum() for k in range(self.K)]
-        if self.indep:
-            for k in range(self.K):
-                sigma[k][0,1] = sigma[k][1,0] = 0
-                s_k = sigma[k].sum()
-                sigma[k][0,0] = sigma[k][1,1] = s_k
+        d = X.shape[1]
+        if self.isotropic:
+            sigma = [np.average(((X-centroid[k])**2).sum(axis=1), weights=tau[k])*np.eye(d) 
+                     for k in range(self.K)]
+        else:
+            tau = tau.reshape((self.K,-1,1))
+            sigma = [(X-centroid[k]).T.dot(tau[k]*(X-centroid[k])) / tau[k].sum() 
+                     for k in range(self.K)]
         return sigma
 
     def fit(self, filename):
@@ -48,8 +49,7 @@ class EM:
             #generate for the data the probability to be in each gaussian
             tau = np.array([pi[k]*clusters[k].probability(X) 
                             for k in range(self.K)])
-            Z = tau.mean(axis=0)
-            tau /= Z
+            tau /= tau.sum(axis=0)
 
             #M-step
             #fit the gaussian to the actual clustering
