@@ -4,9 +4,37 @@ from numpy.linalg import pinv, det
 import matplotlib as mpl
 
 class gaussian_density:
+    '''Gaussian distribution object
+
+    Parameters
+    ----------
+    mu: array like object
+        Center of the distribution of dimension d.
+
+    sigma: array like object
+        Covariance matrix of the distribution.
+        It should be a square matrix with dimension
+        d equal to the one of mu
+
+    Usage
+    -----
+    You can use set_var(sigma) and set_moy(mu) to 
+    change sigma and mu parameters
+
+    You can use probability(x) to compute the probability
+    to get x from this distribution
+
+    You can use plot_conf(c) to get an ellipse representation
+    of your confidence interval.
+    If d =2 then you will get the confidence 90% ellipse.
+    Else, you will get the 90% confidence ellipse for the 2
+    strongest eigenvalues
+    
+    '''
     def __init__(self, mu, sigma):
-        self.mu = mu.reshape((1,-1))
-        self.sigma = sigma
+
+        self.mu = np.array(mu).reshape((1,-1))
+        self.sigma = np.array(sigma)
 
     def probability(self, X):
         prob = 1/(np.sqrt(det(self.sigma)))*np.exp(
@@ -25,6 +53,10 @@ class gaussian_density:
 
     def plot_conf(self, c):
         v, w = linalg.eigh(self.sigma)
+        if v.shape[0] > 2:
+            order = v.argsort()
+            v = v[order]
+            w = w[:,order]
         angle = np.arctan2(w[0][1], w[0][0])
         angle = 180 * angle / np.pi
         v = 1.83 * 2 * np.sqrt(v)
