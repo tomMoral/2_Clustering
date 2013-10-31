@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from numpy import linalg
+from pylab import *
 
 from load import load
 
@@ -63,13 +64,17 @@ class EM:
         self.centroids = np.array(centroids)
         self.sigma = np.array(sigma)
         self.pi = np.array(pi)
+        labels = tau.argmax(axis=0).flatten()
 
         fig = plt.figure()
-        cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
+        cm = get_cmap('jet', self.K)
         plt.scatter(X[:,0], X[:,1], marker = 'o', 
-                    c=tau.argmax(axis=0).flatten(), cmap=cm)
+                    c=labels, cmap=cm)
         plt.scatter(self.centroids[:,0], self.centroids[:,1], 
-                    marker='o', linewidths=10)
+                    marker='o', linewidths=8)
+        ax  = fig.axes[0]
+        for k in range(self.K):
+            ax.add_artist(clusters[k].plot_conf(cm(k)))
         fig.show()
         plt.savefig('../figures/'+self.name +'_train.eps')
 
@@ -83,20 +88,23 @@ class EM:
         sigma = self.sigma
         pi = self.pi
 
-        clusters = [gaussian_density(centroid[k], np.eye(d)) 
+        clusters = [gaussian_density(centroid[k], sigma[k]) 
                     for k in range(self.K)]
 
         tau = np.array([pi[k]*clusters[k].probability(X) 
                         for k in range(self.K)])
         Z = tau.mean(axis=0)
         tau /= Z
-        clusters = tau.argmax(axis=0).flatten()
+        labels = tau.argmax(axis=0).flatten()
 
-        cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
+
         fig = plt.figure()
-        plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
-        plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
-        plt.show()
+        cm = get_cmap('jet', self.K)
+        plt.scatter(X[:,0], X[:,1], marker = 'o', c=labels, cmap=cm)
+        plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=8)
+        ax  = fig.axes[0]
+        for k in range(self.K):
+            ax.add_artist(clusters[k].plot_conf(cm(k)))
+        fig.show()
         plt.savefig('../figures/'+self.name +'_test.eps')
-
 

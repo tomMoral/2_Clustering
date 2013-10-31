@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 if args.m == 'EM':
     model = EM(args.K, indep=args.indep)
-    for i in range(10):
+    for i in range(1):
         model.fit(f_trn)
         model.test(f_tst)
 else: 

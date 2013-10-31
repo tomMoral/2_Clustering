@@ -25,10 +25,10 @@ class gaussian_density:
 
     def plot_conf(self, c):
         v, w = linalg.eigh(self.sigma)
-        angle = np.artan2(w[0][1], w[0][0])
+        angle = np.arctan2(w[0][1], w[0][0])
         angle = 180 * angle / np.pi
-        v *= 4
-        ell = mpl.patches.Ellipse(self.mu, v[0], v[1], 180 +
-                                  angle, color=c)
+        v = 1.83 * 2 * np.sqrt(v)
+        ell = mpl.patches.Ellipse(self.mu.flatten(), v[0], v[1], 180 +
+                                  angle, color=c, alpha=0.5)
         return ell
 
