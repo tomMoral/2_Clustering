@@ -76,7 +76,9 @@ class EM:
         for k in range(self.K):
             ax.add_artist(clusters[k].plot_conf(cm(k)))
         fig.show()
-        plt.savefig('../figures/'+self.name +'_train.eps')
+        plt.savefig('../figures/'+self.name + '_' +
+                    ('iso' if self.isotropic else 'gen') 
+                    +'_train.eps')
 
         return tau
 
@@ -106,5 +108,7 @@ class EM:
         for k in range(self.K):
             ax.add_artist(clusters[k].plot_conf(cm(k)))
         fig.show()
-        plt.savefig('../figures/'+self.name +'_test.eps')
+        plt.savefig('../figures/'+self.name + '_' +
+                    ('iso' if self.isotropic else 'gen')
+                    +'_test.eps')
 
