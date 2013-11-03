@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 from numpy import linalg
-from pylab import *
+from pylab import get_cmap
 
 from load import load
 
@@ -28,7 +27,8 @@ class EM:
     def covariance(self, X, centroid, tau):
         d = X.shape[1]
         if self.isotropic:
-            sigma = [np.average(((X-centroid[k])**2).sum(axis=1), weights=tau[k])*np.eye(d) 
+            sigma = [np.average(((X-centroid[k])**2), weights=tau[k],
+                     axis=0).sum()/2*np.eye(d) 
                      for k in range(self.K)]
         else:
             tau = tau.reshape((self.K,-1,1))
@@ -57,14 +57,22 @@ class EM:
                          for k in range(self.K)]
             sigma = self.covariance(X, centroids, tau)
             pi = [tau[k].sum() / tau.sum() for k in range(self.K)]
+            e = 0
             for k in range(self.K):
-                e = clusters[k].set_moy(centroids[k])
+                e += clusters[k].set_moy(centroids[k])
                 e += clusters[k].set_var(sigma[k])
+            e /= self.K
 
         self.centroids = np.array(centroids)
         self.sigma = np.array(sigma)
         self.pi = np.array(pi)
         labels = tau.argmax(axis=0).flatten()
+
+        llh = (tau*np.log(tau)).sum()
+        print 'Train log-likelyhood for {} {}  : {}'.format(self.name,
+               ('Iso' if self.isotropic else 'Gen'), llh)
+
+
 
         fig = plt.figure()
         cm = get_cmap('jet', self.K)
@@ -95,10 +103,12 @@ class EM:
 
         tau = np.array([pi[k]*clusters[k].probability(X) 
                         for k in range(self.K)])
-        Z = tau.mean(axis=0)
-        tau /= Z
+        tau /= tau.sum(axis=0)
         labels = tau.argmax(axis=0).flatten()
 
+        llh = (tau*np.log(tau)).sum()
+        print 'Test log-likelyhood for {} {}  : {}'.format(self.name,
+               ('Iso' if self.isotropic else 'Gen'), llh)
 
         fig = plt.figure()
         cm = get_cmap('jet', self.K)

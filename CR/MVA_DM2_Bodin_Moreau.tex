@@ -1,6 +1,15 @@
 \documentclass[11pt]{article}
 
-\usepackage{amsmath, amssymb}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\usepackage{bm}
+\usepackage{epstopdf}
 
 \title{\textbf{Assignement 2}}
 \author{Vincent Bodin \& Thomas Moreau}
@@ -40,4 +49,14 @@ p(x_i| x_{\pi_i}) p(x_j | x_{\pi_j}) &=& p(x_j | x_{\pi_i}, x_i) p(x_i | x_{\pi_
 Thus, we have $p(x) \in \mathcal{L}(G')$. By symmetry, we have $\mathcal{L}(G) = \mathcal{L}(G')$.
 
 
+\section{Implementation - Gaussian mixtures\\}
+
+\emph{(a)}
+
+\begin{figure}
+\begin{tabular}{c c}
+\includegraphics[width=7cm]{../figures/Kmeans_train.eps}
+\includegraphics[width=7cm]{../figures/Kmeans_test.eps}
+\end{tabular}
+\end{figure}
 \end{document}

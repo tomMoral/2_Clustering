@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from pylab import get_cmap
 
 from load import load
 
@@ -59,7 +59,8 @@ class Kmeans:
             clusters = np.argmin(dist, 1)
        
         self.centroid = centroid
-        disto = np.square(dist).sum()
+        dist = np.array(dist).min(axis=1)
+        disto = (dist**2).sum()
 
         return (disto, centroid)
 
@@ -69,7 +70,7 @@ class Kmeans:
         dist = [[norm(x-c) for c in centroid] for x in X]
         clusters = np.argmin(dist, 1)
 
-        cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
+        cm = get_cmap('jet', self.K)
         fig = plt.figure()
         plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
         plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)

@@ -28,16 +28,16 @@ args = parser.parse_args()
 
 if args.m == 'EM':
     model = EM(args.K, isotropic=args.iso)
-    for i in range(1):
-        model.fit(f_trn)
-        model.test(f_tst)
+    model.fit(f_trn)
+    model.test(f_tst)
 else: 
     model = Kmeans(args.K, args.spread)
     distos = []
     centers = []
     X = load(f_trn)
-    for i in range(50):
-        out.write('\r{:3.0%}'.format(i/(50.)))
+    nstart = 10
+    for i in range(nstart):
+        out.write('\r{:3.0%}'.format(i/float(nstart)))
         out.flush()
         d,c = model.fit(X)
         distos.append(d)
