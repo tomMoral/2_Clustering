@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from pylab import get_cmap
 
 from load import load
 
@@ -39,8 +39,7 @@ class Kmeans:
             
         return np.array(centroid)
 
-    def fit(self, filename):
-        X = load(filename)
+    def fit(self, X):
         n = X.shape[0]
         K = self.K
 
@@ -58,27 +57,23 @@ class Kmeans:
             clusters_prev = clusters
             dist = [[norm(x-c) for c in centroid] for x in X]
             clusters = np.argmin(dist, 1)
-        
-        self.centroid = centroid
        
-        fig = plt.figure()
-        cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
-        plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
-        plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
-        fig.show()
-        plt.savefig('../figures/'+self.name +'_train.eps')
+        self.centroid = centroid
+        dist = np.array(dist).min(axis=1)
+        disto = (dist**2).sum()
 
-    def test(self, filename):
+        return (disto, centroid)
+
+    def plot(self, filename, centroid, step):
+
         X = load(filename)
-        centroid = self.centroid
-
         dist = [[norm(x-c) for c in centroid] for x in X]
         clusters = np.argmin(dist, 1)
 
-        cm = ListedColormap(['r', 'b', 'g', 'c', 'y', 'm', 'k'])
+        cm = get_cmap('jet', self.K)
         fig = plt.figure()
         plt.scatter(X[:,0], X[:,1], marker = 'o', c=clusters, cmap=cm)
         plt.scatter(centroid[:,0], centroid[:,1], marker='o', linewidths=10)
-        plt.show()
-        plt.savefig('../figures/'+self.name +'_test.eps')
+        fig.show()
+        plt.savefig('../figures/'+self.name +'_' + step + '.eps')
 
