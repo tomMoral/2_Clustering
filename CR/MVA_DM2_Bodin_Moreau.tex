@@ -1,29 +1,237 @@
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 
-\usepackage{amsmath, amssymb}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{color}
+\usepackage{bm}
+\usepackage{epstopdf}
+\usepackage{dsfont}
+\usepackage{tikz}
 
-\title{\textbf{Assignement 2}}
-\author{Vincent Bodin \& Thomas Moreau}
-\date{}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+
+\newcommand{\rr}{\mathbb{R}}
+\newcommand{\zz}{\mathbb{Z}}
+\newcommand{\indep}{\ensuremath{\,\bot\!\!\!\bot\,}} %% The symbol for independent
+
+
 \begin{document}
 
-\maketitle
 
-\section{Distribution factorizing in a graph}
+\begin{center}
+\huge\textbf{Probabilistic Graphical Model\\ \Large
+Assignment 1}\normalsize \\
+\vspace{0.5cm}
+Vincent BODIN \& Thomas MOREAU
+\end{center}
 
-\textbf{Proposition} Let $G = (V, E)$ a DAG and $i \rightarrow j$ be a \textit{covered edge}.\\
-Let  $G' = (V, E')$ , with $E' = (E\setminus\{i\rightarrow j\})\cup \{i \rightarrow j\}$\\
-Then we have $\mathcal{L}(G) = \mathcal{L}(G')$\\
-\\
-\textbf{Proof}  Let $p(x) \in \mathcal{L}(G)$\\
-\begin{equation*}
+\hrulefill
+\vspace{1cm}
+
+
+\section{Distributions factorizing in a graph}
+
+
+\textbf{(a) }\begin{itemize}
+\item We want to show that if $i \rightarrow j$ is a covered edge, then we can reverse it without affecting the factorizing property. Without loss of generality we can always assume that the graph is like the one shown in Fig.(\ref{fig1}). Indeed it suffices to write that we want to have:
+\begin{equation}
 \begin{array}{r l l}
-p(x) &=& \displaystyle\prod_{k=1}^{n} p(x_k | x_{\pi_k})\\
-\\
-p(x_j | x_{\pi_j}) p(x_i | x_{\pi_i}) &=& \displaystyle \frac{p(x_j, x_i | x_{\pi_i})}{p(x_i)} p(x_i|x_{\pi_i}) \\
-&=& \\
+p(x) \in \mathcal{L}(G) 	& \iff & \displaystyle p(x) = \left( \prod_{p\in \{1,\cdots, n\} - \{i,j\} } p(x_p | x_{\pi_p}) \right) p(x_i | x_{\pi_i}) p(x_j | x_i, x_{\pi_i}) \\ 
+p(x) \in \mathcal{L}(G')  & \iff & \displaystyle p(x) = \left( \prod_{p\in \{1,\cdots, n\} - \{i,j\} } p(x_p | x_{\pi_p}) \right) p(x_j | x_{\pi_i}) p(x_i | x_j, x_{\pi_i})
 \end{array}
-\end{equation*}
+\end{equation}
+Hence this implies that we can forget about all the other terms than the one represented in Fig.(\ref{fig1}).
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,1) {$\pi_i$};
+	\node (n2) at (3,3)  {i};
+	\node (n3) at (5,1) {j};
+	\foreach \from/\to in {n1/n2,n2/n3,n1/n3}
+	\draw[->] (\from) -- (\to);
+\end{tikzpicture}
+\caption{Graph with covered edge}
+\label{fig1}
+\end{figure}
+
+We denote $p_{\pi_i}(x)$ the probability given $x_{\pi_i}$. As this is a probability, we can apply to it the so-called Bayes formula: 
+\begin{equation}
+p_{\pi_i}(x_i) p_{\pi_i}(x_j | x_i) = p_{\pi_i}(x_j) p_{\pi_i}(x_i | x_j) 
+\label{eq:}
+\end{equation}
+proving that $\mathcal{L}(G) = \mathcal{L}(G')$.
+
+
+
+\item As we deal with a tree without V-structure, we necessarily have a unique node, say $\{1\}$ that has no parent - unique because we do not have a forest, and exists because if not we would either have a cycle or a V-structure. Let us consider a topological order - by depth - such that $\{1\}$ represents the first level of the graph, then $\{1\}$ have, say $I-1 (I\geq 1)$ children denoted by $\{2\},\cdots, \{I\}$ as in Fig.(\ref{fig2}).
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,3) {1};
+	\node (n2) at (3,6) {2};
+	\node (n3) at (3,4) {3};
+	\node (n4) at (3,1) {$I$};
+	\node (n5) at (5,7) {$I$+1};
+	\node (n6) at (5,6) {$\vdots$};
+	\node (n7) at (3,3) {$\vdots$};
+	\foreach \from/\to in {n1/n2,n1/n3,n1/n4,n2/n5}
+	\draw[->] (\from) -- (\to);
+\end{tikzpicture}
+\caption{Order considered}
+\label{fig2}
+\end{figure}
+
+Take a distribution $p$ that factorizes in $G$. We thus have: 
+\begin{equation}
+p(x) = \prod_{i=1}^n p(x_i | x_{\pi_i})
+\end{equation}
+Let us show that we can set $\mathcal{C} = \{ \{1\}, \{i_{\pi_i}, i\}_{i > I} \}$. First notice that the cliques cannot be of size $\geq 3$. Assume we have a clique of size 3, we give in Fig.(\ref{fig2}) an image to fix the notation. 
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,1) {$n_1$};
+	\node (n2) at (3,3) {$n_2$};
+	\node (n3) at (5,1) {$n_3$};
+	\foreach \from/\to in {n1/n2,n2/n3,n1/n3}
+	\draw (\from) -- (\to);
+\end{tikzpicture}
+\caption{Clique of size 3}
+\label{fig3}
+\end{figure}
+
+Going back to the directed graph leads to the following contradiction. Each node has less than one parent. Assume first every node has one parent. Take $n_3$ for instance, say its parent is $n_2$. Then $n_2$ must have $n_1$ as parent, hence the parent of $n_1$ is $n_3$ and we get a cycle. So there must exist one node with no parent, say $n_1$. Hence it must have two children to cover the edges so $n_2$ and $n_3$ are the sons of $n_1$. But the edge $n_2 \rightarrow n_3$ (or the other way round) implies that $n_3$ (respectively $n_2$) is a V-structure. Hence the cliques cannot be of size 3. As every subset of a clique is a clique as well, it cannot be of size $\geq 3$.
+
+
+In particular, this implies that every clique is of size less or equal than 2. Let us take as a first clique $c_1 = \{ 1 \}$ the root of the tree. We can build the other cliques as being $\mathcal{C} = \{ \{1\}, \{i_{\pi_i}, i\}_{i > I} \}$. We then have:
+\begin{equation}
+\begin{array}{r l l l}
+p(x) & = & \displaystyle p(x_1) \left( \prod_{i=2}^n p(x_i | x_{\pi_i}) \right) & \\
+		 & = & \displaystyle p(x_1) \left( \prod_{c = \{x_{\pi_i}, i\}_{i > I}} \psi_c(x_c) \right) & \text{with } \psi_c (x_c) = p(x_i | x_{\pi_i}) \\
+		 & = & \displaystyle \prod_{c\in\mathcal{C}} \psi_c(x_c) & \text{with } \psi_{\{1\}} = p(x_1) 
+\end{array}
+\label{eq:}
+\end{equation}
+which proves that $p\in\mathcal{L}(G')$. Note that all the computation we did were actually equivalence, the other way round implies $\mathcal{L}(G) = \mathcal{L}(G')$.
+
+\end{itemize}
+
+
+\textbf{(b)} We assume we have an undirected graph $G = (V,E)$.
+\begin{itemize}
+\item Assume $|V| = 1$ then it is obvious that $G' = (V,\emptyset)$ will verify $\mathcal{L}(G) = \mathcal{L}(G')$.
+
+\item Assume $|V| = 2$. If we assume $G$ is not connected, then we get two graphs of size $1$ for which we have already seen it was not possible. From now on, we will only consider connected graphs. Then the result is once again obvious because we obtain a complete graph for which we know it does not work. That is a new indication, we have to take a connected graph non complete from now on. 
+
+\item Assume $|V| = 3$, then as we cannot deal with complete graph, we only have two edges. Take a Markov chain or latent cause model, we know by the question (a) that both of them will give the same factorization as in $G$. Hence we have to look farther.
+
+\item Assume $|V| = 4$, we have to put at least three edges to get a connected graph but in this case taking $G'$ a Markov chain with the same edges as in $G$ would lead to $\mathcal{L}(G) = \mathcal{L}(G')$. Hence we have to put four edges. Let us take the following graph as in Fig.(\ref{fig4}).
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,1) {1};
+	\node (n2) at (1,3) {2};
+	\node (n3) at (3,3) {3};
+	\node (n4) at (3,1) {4};
+	\foreach \from/\to in {n1/n2,n2/n3,n3/n4,n4/n1}
+	\draw (\from) -- (\to);
+\end{tikzpicture}
+\caption{Graph such that there no $G'$ directed that verifies $\mathcal{L}(G) = \mathcal{L}(G')$}
+\label{fig4}
+\end{figure}
+
+Let us prove there no directed graph $G'$ such that $\mathcal{L}(G) = \mathcal{L}(G')$. In order to have $\mathcal{L}(G') = \mathcal{L}(G)$, $G'$ need to have the same number of vertices. It also needs to be connected as $G$ is connected (else it would imply by taking the connected components that a smaller set of $G'$ would also work which we excluded). It cannot neither makee new edges appear: it would bring dependence between two variables that cannot appear since the cliques in $G$ are made of maximum two nodes. As we need a DAG also, it implies that $G'$ will at least have a V-structure and look like Fig.(\ref{fig5}). 
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,1) {1};
+	\node (n2) at (1,3) {2};
+	\node (n3) at (3,3) {3};
+	\node (n4) at (3,1) {4};
+	\foreach \from/\to in {n1/n2,n2/n3,n3/n4,n1/n4}
+	\draw[->] (\from) -- (\to);
+\end{tikzpicture}
+\caption{Graph such that there no $G'$ directed that verifies $\mathcal{L}(G) = \mathcal{L}(G')$}
+\label{fig5}
+\end{figure}
+
+What is important is that there is a V-structure in, say node 4, as in the previous figure. Then factorizing in $G'$ introduces a $p(x_4| x_1,x_3)$ which is not a clique in $G$.
+
+\end{itemize}
+
+
+
+\section{d-separation}
+
+\textbf{(a) }$S$ separates $A$ and $B$ in $G_M$ which implies that for every chain $c(a,b)$ from $a\in A$ to $b\in B$, there exists $s\in S$ such that $d\in c(a,b)$. To facilitate the drawings we just assume the chain is $(a,s,b)$. We have two possibilities shown in Fig.(\ref{fig6}), either we have no V-structure or we have one.
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,1) {$a$};
+	\node (n2) at (3,3) {$s$};
+	\node (n3) at (5,1) {$b$};
+	\foreach \from/\to in {n1/n2,n2/n3}
+	\draw[->] (\from) -- (\to);
+	
+	\node (n4) at (7,1) {$a$};
+	\node (n5) at (9,3) {$s$};
+	\node (n6) at (11,1) {$b$};
+	\foreach \from/\to in {n4/n5,n6/n5}
+	\draw[->] (\from) -- (\to);
+	\foreach \from/\to in {n4/n6}
+	\draw[red] (\from) -- (\to);
+\end{tikzpicture}
+\caption{(left) generic case with no V-structure; (right) V-structure}
+\label{fig6}
+\end{figure}
+
+If we do not have any V-structure then we are directly blocked by $s\in S$. Assume now we have a V-structure in $s$, that would imply that an edge - drawn in red - was in $G_M$ which contradicts the fact that $S$ separated $A$ and $B$ in $G_M$. Hence there cannot be any V-structure and then $A$ and $B$ are separated by $S$ in $G$.\\
+
+
+
+\textbf{(b) }We give a counter example in Fig.(\ref{7}). 
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+	[scale=.8]
+	\node (n1) at (1,1) {$t$};
+	\node (n2) at (1,3) {$a$};
+	\node (n3) at (3,3) {$u$};
+	\node (n4) at (3,1) {$s$};
+	\node (n5) at (5,1) {$b$};
+	\foreach \from/\to in {n2/n1,n1/n4,n2/n3,n4/n3,n4/n5}
+	\draw[->] (\from) -- (\to);
+\end{tikzpicture}
+\caption{Counter-example}
+\label{fig7}
+\end{figure}
+We set $A=\{a\}, B=\{b\}, S=\{s\}$ and $T=\{t\}$. Then $A$ and $B$ are d-separated by $S$ because every chain that goes from $A$ to $B$ passes through $s$ and there is no V-structure. $A$ and $S$ are d-separated by $T$ because a chain going from $A$ to $S$ passes either through $t$ that is not a V-structure or through $u$ that is one but who have no descendant in $T$. But $A$ and $B$ are not d-separated by $T$ since a chain can go from $A$ to $B$ through $(a,u,s,b)$ and $(a,u,s)$ is a V-structure but $t$ is a descendant of $s$.\\
+
+
+
+
+
+\textbf{(c) }
+\begin{itemize}
+\item $X_{\{1,2\}} \indep X_4 |\ X_3$ is true. A chain from $A$ to $B$ passes through $(a,8,b)$ that is a V-structure with no descendant in $\{3\}$.
+
+\item $X_{\{1,2\}} \indep X_4 |\ X_5$ is false. A chain from $A$ to $B$ passes through $(a,8,b)$ that is a V-structure and $\{5\}$ is a descendant of 8.
+
+\item $X_1 \indep X_6 |\ X_{\{ 2,4,7 \}}$ is true. A chain from $A$ to $B$ passes through $(8,7,6)$ without a V-structure.
+\end{itemize}
+
+
 
 
 \end{document}
