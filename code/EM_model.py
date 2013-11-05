@@ -86,7 +86,7 @@ class EM:
         fig.show()
         plt.savefig('../figures/'+self.name + '_' +
                     ('iso' if self.isotropic else 'gen') 
-                    +'_train.eps')
+                    +'_train.png')
 
         return tau
 
@@ -120,5 +120,5 @@ class EM:
         fig.show()
         plt.savefig('../figures/'+self.name + '_' +
                     ('iso' if self.isotropic else 'gen')
-                    +'_test.eps')
+                    +'_test.png')
 
