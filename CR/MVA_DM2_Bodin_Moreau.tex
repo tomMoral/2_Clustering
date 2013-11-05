@@ -68,58 +68,12 @@ p_{\pi_i}(x_i) p_{\pi_i}(x_j | x_i) = p_{\pi_i}(x_j) p_{\pi_i}(x_i | x_j)
 proving that $\mathcal{L}(G) = \mathcal{L}(G')$.
 
 
-
-\item As we deal with a tree without V-structure, we necessarily have a unique node, say $\{1\}$ that has no parent - unique because we do not have a forest, and exists because if not we would either have a cycle or a V-structure. Let us consider a topological order - by depth - such that $\{1\}$ represents the first level of the graph, then $\{1\}$ have, say $I-1 (I\geq 1)$ children denoted by $\{2\},\cdots, \{I\}$ as in Fig.(\ref{fig2}).
-\begin{figure}[h!]
-\centering
-\begin{tikzpicture}
-	[scale=.8]
-	\node (n1) at (1,3) {1};
-	\node (n2) at (3,6) {2};
-	\node (n3) at (3,4) {3};
-	\node (n4) at (3,1) {$I$};
-	\node (n5) at (5,7) {$I$+1};
-	\node (n6) at (5,6) {$\vdots$};
-	\node (n7) at (3,3) {$\vdots$};
-	\foreach \from/\to in {n1/n2,n1/n3,n1/n4,n2/n5}
-	\draw[->] (\from) -- (\to);
-\end{tikzpicture}
-\caption{Order considered}
-\label{fig2}
-\end{figure}
-
-Take a distribution $p$ that factorizes in $G$. We thus have: 
+\item We need to show that in the case of a tree there is equivalence between: $X_i \indep X_{\text{nd}(i)} | X_{\pi(i)}$ and $X_A \indep X_B | X_C$ if $A$ and $B$ are separated by $C$. It is pretty straightforward as we notice that that d-separation is equivalent to separation in this kind of graph because there is no V-structure. Hence we can deduce from this the series of equivalence:
 \begin{equation}
-p(x) = \prod_{i=1}^n p(x_i | x_{\pi_i})
+p(x)\in\mathcal{L}(G) \Leftrightarrow X_i \indep X_{\text{nd}(i)} | X_{\pi(i)} \Leftrightarrow X_A \indep X_B | X_C \Leftrightarrow \mathcal{L}(G')
 \end{equation}
-Let us show that we can set $\mathcal{C} = \{ \{1\}, \{i_{\pi_i}, i\}_{i > I} \}$. First notice that the cliques cannot be of size $\geq 3$. Assume we have a clique of size 3, we give in Fig.(\ref{fig2}) an image to fix the notation. 
-\begin{figure}[h!]
-\centering
-\begin{tikzpicture}
-	[scale=.8]
-	\node (n1) at (1,1) {$n_1$};
-	\node (n2) at (3,3) {$n_2$};
-	\node (n3) at (5,1) {$n_3$};
-	\foreach \from/\to in {n1/n2,n2/n3,n1/n3}
-	\draw (\from) -- (\to);
-\end{tikzpicture}
-\caption{Clique of size 3}
-\label{fig3}
-\end{figure}
-
-Going back to the directed graph leads to the following contradiction. Each node has less than one parent. Assume first every node has one parent. Take $n_3$ for instance, say its parent is $n_2$. Then $n_2$ must have $n_1$ as parent, hence the parent of $n_1$ is $n_3$ and we get a cycle. So there must exist one node with no parent, say $n_1$. Hence it must have two children to cover the edges so $n_2$ and $n_3$ are the sons of $n_1$. But the edge $n_2 \rightarrow n_3$ (or the other way round) implies that $n_3$ (respectively $n_2$) is a V-structure. Hence the cliques cannot be of size 3. As every subset of a clique is a clique as well, it cannot be of size $\geq 3$.
 
 
-In particular, this implies that every clique is of size less or equal than 2. Let us take as a first clique $c_1 = \{ 1 \}$ the root of the tree. We can build the other cliques as being $\mathcal{C} = \{ \{1\}, \{i_{\pi_i}, i\}_{i > I} \}$. We then have:
-\begin{equation}
-\begin{array}{r l l l}
-p(x) & = & \displaystyle p(x_1) \left( \prod_{i=2}^n p(x_i | x_{\pi_i}) \right) & \\
-		 & = & \displaystyle p(x_1) \left( \prod_{c = \{x_{\pi_i}, i\}_{i > I}} \psi_c(x_c) \right) & \text{with } \psi_c (x_c) = p(x_i | x_{\pi_i}) \\
-		 & = & \displaystyle \prod_{c\in\mathcal{C}} \psi_c(x_c) & \text{with } \psi_{\{1\}} = p(x_1) 
-\end{array}
-\label{eq:}
-\end{equation}
-which proves that $p\in\mathcal{L}(G')$. Note that all the computation we did were actually equivalence, the other way round implies $\mathcal{L}(G) = \mathcal{L}(G')$.
 
 \end{itemize}
 
@@ -148,7 +102,11 @@ which proves that $p\in\mathcal{L}(G')$. Note that all the computation we did we
 \label{fig4}
 \end{figure}
 
-Let us prove there no directed graph $G'$ such that $\mathcal{L}(G) = \mathcal{L}(G')$. In order to have $\mathcal{L}(G') = \mathcal{L}(G)$, $G'$ need to have the same number of vertices. It also needs to be connected as $G$ is connected (else it would imply by taking the connected components that a smaller set of $G'$ would also work which we excluded). It cannot neither makee new edges appear: it would bring dependence between two variables that cannot appear since the cliques in $G$ are made of maximum two nodes. As we need a DAG also, it implies that $G'$ will at least have a V-structure and look like Fig.(\ref{fig5}). 
+Let us prove there is no directed graph $G'$ such that $\mathcal{L}(G) = \mathcal{L}(G')$. In order to have $\mathcal{L}(G') = \mathcal{L}(G)$, $G'$ need to have the same number of vertices. It also needs to be connected as $G$ is connected (else it would imply by taking the connected components that a smaller set of $G'$ would also work which we excluded). 
+
+Let us prove that the DAG associated has exactly four edges as well. The only way to have a different number of edges is that the DAG has a V-structure and then the moralized gets one new edge. From this remark we can infer that there can only be less edges in the DAG than in the undirected graph. Having one and two edges automatically lead to a non connected graph which is prohibited. Taking only three edges implies that we have a kind of C in the graph, for instance $(1,2)$, $(2,3)$, $(3,4)$ could be the edges. But in this case if we want the undirected graph related to have four edges, we need it to have a V-structure, which will necessarily be in a node that has two neighbors. Hence it cannot lead to a graph like the one in Fig.(\ref{fig4}) - it leads to a graph composed of a triangle plus a node linked with only one edge to this triangle.
+
+As we need a DAG also, it implies that $G'$ will at least have a V-structure and look like Fig.(\ref{fig5}).
 \begin{figure}[h!]
 \centering
 \begin{tikzpicture}
